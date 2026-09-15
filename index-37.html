@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>WinAdda</title>
+<style>
+:root {
+  --navy-deep: #0b1030;
+  --navy: #131a45;
+  --navy-card: #1a2358;
+  --blue: #2f8fff;
+  --blue-bright: #4fb3ff;
+  --gold: #ffc934;
+  --gold-deep: #ff9d34;
+  --pink: #ff4d8d;
+  --purple: #8b5cf6;
+  --text-main: #f4f6ff;
+  --text-dim: #a4acd6;
+  --danger: #ff6b6b;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+  background: var(--navy-deep);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+/* ===================== AUTH ===================== */
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 0%, #1b2568 0%, var(--navy-deep) 60%);
+  padding: 24px;
+}
+
+.auth-glow {
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  top: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(47,143,255,0.35), transparent 70%);
+  filter: blur(10px);
+}
+
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(180deg, var(--navy-card), var(--navy));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-lg);
+  padding: 32px 26px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--navy-deep);
+  font-size: 1.1rem;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.brand.small .brand-mark { width: 28px; height: 28px; font-size: 0.95rem; }
+.brand.small .brand-name { font-size: 1.15rem; }
+
+.auth-tag {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  margin: 0 0 22px;
+}
+
+.auth-tabs {
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 22px;
+}
+
+.auth-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  padding: 10px 0;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.auth-tab.active {
+  background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+  color: white;
+}
+
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.auth-form input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-main);
+  font-size: 0.98rem;
+}
+
+.auth-form input:focus {
+  outline: 2px solid var(--blue-bright);
+  outline-offset: 1px;
+}
+
+.form-error {
+  color: var(--danger);
+  font-size: 0.82rem;
+  min-height: 1em;
+  margin: 0;
+}
+
+.btn-primary {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy-deep);
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255,159,52,0.3);
+}
+
+.btn-primary:active { transform: translateY(1px); }
+
+.btn-secondary {
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: var(--text-main);
+  border-radius: 999px;
+  padding: 13px 0;
+  width: 100%;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 18px;
+}
+
+.auth-note {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  margin: 18px 0 0;
+  line-height: 1.4;
+}
+
+/* ===================== APP SHELL ===================== */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--navy-deep);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  position: sticky;
+  top: 0;
+  background: rgba(11,16,48,0.92);
+  backdrop-filter: blur(6px);
+  z-index: 10;
+}
+
+.points-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,201,52,0.12);
+  border: 1px solid rgba(255,201,52,0.35);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.coin-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+}
+
+.screen-area {
+  flex: 1;
+  padding: 4px 18px 100px;
+  overflow-y: auto;
+}
+
+.screen { display: none; animation: fadeIn 0.25s ease; }
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Home hero ---- */
+.hero-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #1c2a7a, #3350c9 55%, #1e90ff);
+  padding: 26px 22px;
+  margin: 12px 0 24px;
+}
+
+.hero-eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.75);
+  font-weight: 600;
+}
+
+.hero-banner h1 {
+  margin: 0 0 18px;
+  font-size: 1.35rem;
+  line-height: 1.35;
+  max-width: 220px;
+}
+
+.hero-cta {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-weight: 700;
+  background: var(--gold);
+  color: var(--navy-deep);
+  cursor: pointer;
+}
+
+.hero-orb {
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,201,52,0.55), transparent 70%);
+}
+
+.section-title {
+  font-size: 1.05rem;
+  margin: 26px 0 12px;
+}
+
+/* ---- Store banner on home ---- */
+.store-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, #3a2377, #6b2f9e);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin: 22px 0 0;
+  cursor: pointer;
+}
+
+.store-banner h2 { margin: 2px 0 4px; font-size: 1.1rem; }
+.store-banner-sub { margin: 0; font-size: 0.8rem; color: rgba(255,255,255,0.75); }
+.store-banner-arrow { font-size: 1.4rem; color: var(--gold); flex-shrink: 0; }
+
+.back-link {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  padding: 0;
+  margin: 10px 0 2px;
+  cursor: pointer;
+}
+
+.page-title { margin: 14px 0 4px; font-size: 1.4rem; }
+.page-sub { color: var(--text-dim); font-size: 0.9rem; margin: 0 0 20px; }
+
+/* ---- Game cards ---- */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.game-grid.stacked { grid-template-columns: 1fr; gap: 12px; }
+
+.game-card {
+  background: var(--navy-card);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.game-card.wide {
+  flex-direction: row;
+  text-align: left;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+}
+
+.game-art {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.ludo-art { background: linear-gradient(135deg, var(--pink), #b93463); }
+.chess-art { background: linear-gradient(135deg, var(--purple), #4c3a9e); }
+.runner-art { background: linear-gradient(135deg, var(--blue), #1c5fc9); }
+
+.game-info { display: flex; flex-direction: column; gap: 2px; }
+.game-name { font-weight: 700; font-size: 0.92rem; }
+.game-desc { color: var(--text-dim); font-size: 0.78rem; }
+
+.game-badge {
+  font-size: 0.68rem;
+  color: var(--gold);
+  background: rgba(255,201,52,0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-top: 2px;
+  align-self: flex-start;
+}
+
+.game-card.locked { opacity: 0.92; }
+
+/* ---- Info list ---- */
+.info-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  color: var(--text-dim);
+}
+.info-icon { font-size: 1.1rem; }
+
+/* ---- Spin ---- */
+.wheel-wrap {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 20px auto 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -6px;
+  color: var(--gold);
+  font-size: 1.6rem;
+  z-index: 2;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  border: 6px solid var(--gold);
+  background: conic-gradient(
+    #2f8fff 0deg 45deg, #3350c9 45deg 90deg,
+    #2f8fff 90deg 135deg, #3350c9 135deg 180deg,
+    #2f8fff 180deg 225deg, #3350c9 225deg 270deg,
+    #2f8fff 270deg 315deg, #3350c9 315deg 360deg
+  );
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+  box-shadow: 0 0 0 4px rgba(255,201,52,0.2);
+}
+
+.wheel-seg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  transform-origin: 0 0;
+  transform: rotate(calc(var(--i) * 45deg + 22.5deg));
+  color: white;
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  padding-left: 60px;
+}
+
+.wheel-hub {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  z-index: 1;
+  box-shadow: 0 0 0 4px var(--navy-deep);
+}
+
+.spin-btn {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.spin-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.spin-result {
+  text-align: center;
+  color: var(--gold);
+  font-weight: 700;
+  min-height: 1.4em;
+  margin-top: 14px;
+}
+
+/* ---- Withdraw / balances ---- */
+.balance-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.balance-card {
+  background: var(--navy-card);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.balance-card.alt { background: linear-gradient(135deg, #2a1d5e, #3a2377); }
+
+.balance-label { font-size: 0.78rem; color: var(--text-dim); }
+.balance-value { font-size: 1.3rem; font-weight: 800; color: var(--gold); }
+
+.withdraw-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.withdraw-form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--text-dim); }
+.withdraw-form input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-main);
+  font-size: 0.98rem;
+}
+
+.history-list { display: flex; flex-direction: column; gap: 8px; }
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.03);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+.history-amount { color: var(--gold); font-weight: 700; }
+.empty-note { color: var(--text-dim); font-size: 0.85rem; }
+
+/* ---- Store ---- */
+.store-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.store-card {
+  background: var(--navy-card);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.store-art {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  flex-shrink: 0;
+}
+
+.store-info { flex: 1; min-width: 0; }
+.store-name { font-weight: 700; font-size: 0.95rem; display: block; }
+.store-desc { color: var(--text-dim); font-size: 0.78rem; display: block; margin-top: 2px; }
+
+.store-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.store-buy-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.store-buy-btn.pts {
+  background: rgba(255,201,52,0.15);
+  color: var(--gold);
+  border: 1px solid rgba(255,201,52,0.4);
+}
+
+.store-buy-btn.money {
+  background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+  color: white;
+}
+
+.store-buy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.store-owned-badge {
+  background: rgba(96,220,140,0.15);
+  color: #5fdc8c;
+  border: 1px solid rgba(96,220,140,0.4);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ---- Add funds ---- */
+.add-funds-card {
+  background: var(--navy-card);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin-bottom: 24px;
+}
+
+.buy-toggle {
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  border-radius: 999px;
+  padding: 4px;
+  margin-bottom: 14px;
+}
+
+.buy-toggle-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  padding: 9px 0;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.buy-toggle-btn.active {
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color: var(--navy-deep);
+}
+
+.preset-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.preset-chip {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-main);
+  border-radius: var(--radius-sm);
+  padding: 10px 0;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.preset-chip.active {
+  border-color: var(--gold);
+  background: rgba(255,201,52,0.12);
+  color: var(--gold);
+}
+
+.custom-amount-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.custom-amount-label input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-main);
+  font-size: 0.98rem;
+}
+
+.page-sub.small { font-size: 0.82rem; margin-bottom: 16px; line-height: 1.6; }
+
+.qr-box {
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 14px;
+  background: white;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.qr-box img { width: 100%; height: 100%; object-fit: contain; }
+
+.qr-fallback {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #333;
+  padding: 10px;
+  line-height: 1.5;
+}
+
+.qr-fallback code {
+  background: #eee;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.contact-btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  margin: 0 0 18px;
+  box-sizing: border-box;
+}
+
+.form-success {
+  color: #5fdc8c;
+  font-size: 0.82rem;
+  min-height: 1em;
+  margin: 0;
+}
+
+/* ---- Owned items (profile) ---- */
+.owned-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.owned-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+}
+
+/* ---- Profile ---- */
+.profile-head { text-align: center; margin: 10px 0 22px; }
+.avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+.profile-head h1 { margin: 0 0 4px; font-size: 1.3rem; }
+.profile-note { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
+
+/* ---- Bottom nav ---- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #101636;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  z-index: 20;
+}
+
+.nav-item {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.nav-item.active { color: var(--blue-bright); }
+.nav-icon { font-size: 1.15rem; }
+
+.nav-spin {
+  flex: 0 0 62px;
+  position: relative;
+  top: -18px;
+}
+
+.nav-spin-inner {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 8px 20px rgba(255,159,52,0.45), 0 0 0 6px var(--navy-deep);
+}
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1c2358;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-main);
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 50;
+  max-width: 90%;
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (min-width: 480px) {
+  .app { border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============ AUTH SCREEN ============ -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-glow"></div>
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-mark">W</span>
+      <span class="brand-name">WinAdda</span>
+    </div>
+    <p class="auth-tag">Spin daily. Earn points. Unlock games.</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Log in</button>
+      <button class="auth-tab" data-tab="signup">Sign up</button>
+    </div>
+
+    <form id="loginForm" class="auth-form">
+      <label>Username
+        <input type="text" id="loginUsername" autocomplete="username" required>
+      </label>
+      <label>Password
+        <input type="password" id="loginPassword" autocomplete="current-password" required>
+      </label>
+      <p class="form-error" id="loginError"></p>
+      <button type="submit" class="btn-primary">Log in</button>
+    </form>
+
+    <form id="signupForm" class="auth-form hidden">
+      <label>Choose a username
+        <input type="text" id="signupUsername" autocomplete="username" required>
+      </label>
+      <label>Choose a password
+        <input type="password" id="signupPassword" autocomplete="new-password" required>
+      </label>
+      <p class="form-error" id="signupError"></p>
+      <button type="submit" class="btn-primary">Create account</button>
+    </form>
+
+    <p class="auth-note">Points are for in-game use only — WinAdda involves no real-money betting.</p>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app" class="app hidden">
+
+  <header class="topbar">
+    <div class="brand small">
+      <span class="brand-mark">W</span>
+      <span class="brand-name">WinAdda</span>
+    </div>
+    <div class="points-pill" id="topPoints">
+      <span class="coin-dot"></span>
+      <span id="topPointsValue">0</span>
+    </div>
+  </header>
+
+  <main class="screen-area">
+
+    <!-- HOME -->
+    <section id="screen-home" class="screen active">
+      <div class="hero-banner">
+        <div class="hero-text">
+          <p class="hero-eyebrow">Daily Bonus</p>
+          <h1>Spin free every day<br>and stack up points</h1>
+          <button class="hero-cta" data-goto="spin">Go to Spin</button>
+        </div>
+        <div class="hero-orb"></div>
+      </div>
+
+      <h2 class="section-title">Your Games</h2>
+      <div class="game-grid">
+        <div class="game-card locked" data-game="ludo">
+          <div class="game-art ludo-art">🎲</div>
+          <div class="game-info">
+            <span class="game-name">Ludo</span>
+            <span class="game-badge">Coming soon</span>
+          </div>
+        </div>
+        <div class="game-card locked" data-game="chess">
+          <div class="game-art chess-art">♟️</div>
+          <div class="game-info">
+            <span class="game-name">Chess</span>
+            <span class="game-badge">Coming soon</span>
+          </div>
+        </div>
+        <div class="game-card locked" data-game="runner">
+          <div class="game-art runner-art">🍄</div>
+          <div class="game-info">
+            <span class="game-name">Adda Runner</span>
+            <span class="game-badge">Coming soon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="store-banner" data-goto="store">
+        <div class="store-banner-text">
+          <p class="hero-eyebrow">Store</p>
+          <h2>Customise your game boards</h2>
+          <p class="store-banner-sub">Buy with points, or with your wallet balance</p>
+        </div>
+        <span class="store-banner-arrow">→</span>
+      </div>
+
+      <h2 class="section-title">How points work</h2>
+      <div class="info-list">
+        <div class="info-row"><span class="info-icon">🎡</span><span>Spin once a day for free points</span></div>
+        <div class="info-row"><span class="info-icon">🛍️</span><span>Spend points — or wallet money — on board skins in the Store</span></div>
+        <div class="info-row"><span class="info-icon">🏦</span><span>Add money to your wallet any time from the Wallet tab</span></div>
+      </div>
+    </section>
+
+    <!-- GAMES / ACTIVITY -->
+    <section id="screen-games" class="screen">
+      <h1 class="page-title">Games</h1>
+      <p class="page-sub">More games are in the works. Points you earn today will carry over.</p>
+      <div class="game-grid stacked">
+        <div class="game-card locked wide" data-game="ludo">
+          <div class="game-art ludo-art">🎲</div>
+          <div class="game-info">
+            <span class="game-name">Ludo</span>
+            <span class="game-desc">Classic 4-player board, play for points</span>
+            <span class="game-badge">Coming soon</span>
+          </div>
+        </div>
+        <div class="game-card locked wide" data-game="chess">
+          <div class="game-art chess-art">♟️</div>
+          <div class="game-info">
+            <span class="game-name">Chess</span>
+            <span class="game-desc">1v1 strategy, wager points on a match</span>
+            <span class="game-badge">Coming soon</span>
+          </div>
+        </div>
+        <div class="game-card locked wide" data-game="runner">
+          <div class="game-art runner-art">🍄</div>
+          <div class="game-info">
+            <span class="game-name">Adda Runner</span>
+            <span class="game-desc">Simple 2D side-scroller, collect coins</span>
+            <span class="game-badge">Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPIN -->
+    <section id="screen-spin" class="screen">
+      <h1 class="page-title">Daily Spin</h1>
+      <p class="page-sub" id="spinSub">One free spin every day. Come back tomorrow for another.</p>
+
+      <div class="wheel-wrap">
+        <div class="wheel-pointer">▼</div>
+        <div class="wheel" id="wheel">
+          <div class="wheel-seg" style="--i:0">10</div>
+          <div class="wheel-seg" style="--i:1">25</div>
+          <div class="wheel-seg" style="--i:2">5</div>
+          <div class="wheel-seg" style="--i:3">50</div>
+          <div class="wheel-seg" style="--i:4">15</div>
+          <div class="wheel-seg" style="--i:5">100</div>
+          <div class="wheel-seg" style="--i:6">20</div>
+          <div class="wheel-seg" style="--i:7">30</div>
+        </div>
+        <div class="wheel-hub"></div>
+      </div>
+
+      <button class="btn-primary spin-btn" id="spinBtn">Spin now</button>
+      <p class="spin-result" id="spinResult"></p>
+    </section>
+
+    <!-- STORE -->
+    <section id="screen-store" class="screen">
+      <button class="back-link" data-goto="home">← Back</button>
+      <h1 class="page-title">Store</h1>
+      <p class="page-sub">Fixed-price items only — no chance, no randomness. Pick points or wallet money.</p>
+      <div class="store-grid" id="storeGrid"></div>
+    </section>
+
+    <!-- WALLET -->
+    <section id="screen-wallet" class="screen">
+      <h1 class="page-title">Wallet</h1>
+      <p class="page-sub">Your points and money balance, both usable in the Store.</p>
+
+      <div class="balance-cards">
+        <div class="balance-card">
+          <span class="balance-label">Points</span>
+          <span class="balance-value" id="wMainPoints">0</span>
+        </div>
+        <div class="balance-card alt">
+          <span class="balance-label">Wallet money</span>
+          <span class="balance-value" id="wMainMoney">₹0</span>
+        </div>
+      </div>
+
+      <h2 class="section-title">Get more points or funds</h2>
+      <div class="add-funds-card">
+        <div class="buy-toggle">
+          <button class="buy-toggle-btn active" data-mode="points" id="toggleBuyPoints">Buy Points</button>
+          <button class="buy-toggle-btn" data-mode="money" id="toggleAddMoney">Add Wallet Money</button>
+        </div>
+
+        <p class="page-sub small" id="buyModeExplain">
+          Points convert 1:1 with rupees — pay ₹100, get 100 points, straight to your game balance. No chance involved.
+        </p>
+
+        <div class="preset-row" id="presetRow">
+          <button class="preset-chip" data-amount="100">100</button>
+          <button class="preset-chip" data-amount="200">200</button>
+          <button class="preset-chip" data-amount="500">500</button>
+          <button class="preset-chip" data-amount="1000">1000</button>
+        </div>
+
+        <label class="custom-amount-label">Custom amount (min 100)
+          <input type="number" id="customAmount" min="100" step="1" placeholder="e.g. 350">
+        </label>
+
+        <p class="page-sub small">
+          1. Pay the amount above via UPI using the QR code below.<br>
+          2. Send us the payment screenshot for verification.<br>
+          3. We'll reply with a redeem code — enter it below to credit your account.
+        </p>
+        <div class="qr-box">
+          <img src="upi-qr-placeholder.png" alt="UPI QR code" id="qrImage" onerror="this.style.display='none'; document.getElementById('qrFallback').style.display='flex';">
+          <div class="qr-fallback" id="qrFallback">Add your UPI QR image as<br><code>upi-qr-placeholder.png</code></div>
+        </div>
+        <a class="btn-secondary contact-btn" id="contactLink" href="#" target="_blank" rel="noopener">Send payment proof on WhatsApp</a>
+
+        <form id="redeemForm" class="withdraw-form">
+          <label>Redeem code
+            <input type="text" id="redeemCode" placeholder="Enter the code you received">
+          </label>
+          <p class="form-error" id="redeemError"></p>
+          <p class="form-success" id="redeemSuccess"></p>
+          <button type="submit" class="btn-primary">Redeem</button>
+        </form>
+      </div>
+
+      <h2 class="section-title">Wallet history</h2>
+      <div class="history-list" id="walletHistory">
+        <p class="empty-note">No wallet activity yet.</p>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="screen-profile" class="screen">
+      <div class="profile-head">
+        <div class="avatar" id="avatarInitial"></div>
+        <h1 id="profileName">Player</h1>
+        <p class="page-sub" id="profileSince"></p>
+      </div>
+
+      <div class="balance-cards">
+        <div class="balance-card">
+          <span class="balance-label">Points</span>
+          <span class="balance-value" id="profileMainBalance">0</span>
+        </div>
+        <div class="balance-card alt">
+          <span class="balance-label">Wallet money</span>
+          <span class="balance-value" id="profileMoneyBalance">₹0</span>
+        </div>
+      </div>
+
+      <h2 class="section-title">My items</h2>
+      <div class="owned-grid" id="ownedGrid">
+        <p class="empty-note">No items yet — visit the Store to customise your boards.</p>
+      </div>
+
+      <button class="btn-secondary" id="logoutBtn">Log out</button>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-screen="home">
+      <span class="nav-icon">🏠</span><span>Home</span>
+    </button>
+    <button class="nav-item" data-screen="games">
+      <span class="nav-icon">🎮</span><span>Games</span>
+    </button>
+    <button class="nav-item nav-spin" data-screen="spin">
+      <span class="nav-spin-inner">🎡</span>
+    </button>
+    <button class="nav-item" data-screen="wallet">
+      <span class="nav-icon">🏦</span><span>Wallet</span>
+    </button>
+    <button class="nav-item" data-screen="profile">
+      <span class="nav-icon">👤</span><span>Profile</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ============================================================
+   WinAdda — demo points system
+   Everything is stored in the browser's localStorage.
+   This is NOT a secure backend — good enough for a personal/demo
+   project, but do not reuse this password storage for anything
+   real. Points have no cash value; withdrawal just moves points
+   into a separate "withdrawn" balance for future in-game spending.
+   ============================================================ */
+
+const DB_KEY = "winadda_users";
+const SESSION_KEY = "winadda_session";
+const USED_CODES_KEY = "winadda_used_codes";
+const WHEEL_VALUES = [10, 25, 5, 50, 15, 100, 20, 30];
+const WELCOME_BONUS = 50;
+
+/* ------------------------------------------------------------
+   WHATSAPP NUMBER — replace with your own number (country code,
+   no + or spaces, e.g. 919876543210) so buyers can send you their
+   payment screenshot for verification.
+   ------------------------------------------------------------ */
+const OWNER_WHATSAPP = "919999999999";
+
+/* ------------------------------------------------------------
+   REDEEM CODES — this is a static site with no backend, so real
+   payments can't be auto-verified. Workflow:
+   1. Buyer scans your UPI QR (put your own QR image at
+      upi-qr-placeholder.png) and pays you directly.
+   2. Buyer sends you the screenshot on WhatsApp.
+   3. You check the payment yourself, pick an unused code below
+      that matches what they paid, and send them that code.
+   4. Buyer enters the code here to credit their points or wallet.
+   Each code has a type ("points" or "money") and an amount.
+   Add as many as you like; each works once per browser.
+   Redeploy the site after editing this list.
+   ------------------------------------------------------------ */
+const REDEEM_CODES = {
+  "PTS100":  { type: "points", amount: 100 },
+  "PTS200":  { type: "points", amount: 200 },
+  "PTS500":  { type: "points", amount: 500 },
+  "PTS1000": { type: "points", amount: 1000 },
+  "RS50":    { type: "money", amount: 50 },
+  "RS100":   { type: "money", amount: 100 },
+  "RS200":   { type: "money", amount: 200 },
+  "RS500":   { type: "money", amount: 500 }
+};
+
+/* ------------------------------------------------------------
+   STORE ITEMS — fixed-price cosmetics only, no chance element.
+   Add a moneyPrice of 0 to make something points-only, or a
+   pointsPrice of 0 to make it money-only.
+   ------------------------------------------------------------ */
+const STORE_ITEMS = [
+  { id: "board_wood", name: "Classic Wood Board", desc: "Default Ludo board look", emoji: "🟫", pointsPrice: 0, moneyPrice: 0 },
+  { id: "board_gold", name: "Golden Board", desc: "Gold-trimmed Ludo board", emoji: "🟨", pointsPrice: 300, moneyPrice: 49 },
+  { id: "board_neon", name: "Neon Board", desc: "Glow-in-the-dark theme", emoji: "🟪", pointsPrice: 500, moneyPrice: 79 },
+  { id: "board_royal", name: "Royal Marble Board", desc: "Premium marble finish", emoji: "⬜", pointsPrice: 800, moneyPrice: 99 },
+  { id: "chess_marble", name: "Marble Chess Set", desc: "Chess piece skin", emoji: "♟️", pointsPrice: 400, moneyPrice: 59 },
+  { id: "runner_skin", name: "Adda Runner Costume", desc: "Character skin for Adda Runner", emoji: "🧢", pointsPrice: 250, moneyPrice: 39 }
+];
+
+// ---------- storage helpers ----------
+function loadUsers() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveUsers(users) {
+  localStorage.setItem(DB_KEY, JSON.stringify(users));
+}
+function getSession() {
+  return localStorage.getItem(SESSION_KEY);
+}
+function setSession(username) {
+  localStorage.setItem(SESSION_KEY, username);
+}
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// ---------- toast ----------
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+// ---------- auth tabs ----------
+document.querySelectorAll(".auth-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".auth-tab").forEach(b => b.classList.remove("active"));
+    tab.classList.add("active");
+    const isLogin = tab.dataset.tab === "login";
+    document.getElementById("loginForm").classList.toggle("hidden", !isLogin);
+    document.getElementById("signupForm").classList.toggle("hidden", isLogin);
+  });
+});
+
+// ---------- signup ----------
+document.getElementById("signupForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const username = document.getElementById("signupUsername").value.trim();
+  const password = document.getElementById("signupPassword").value;
+  const errEl = document.getElementById("signupError");
+  errEl.textContent = "";
+
+  if (username.length < 3) { errEl.textContent = "Username must be at least 3 characters."; return; }
+  if (password.length < 4) { errEl.textContent = "Password must be at least 4 characters."; return; }
+
+  const users = loadUsers();
+  const key = username.toLowerCase();
+  if (users[key]) { errEl.textContent = "That username is already taken."; return; }
+
+  users[key] = {
+    displayName: username,
+    password: password,
+    points: WELCOME_BONUS,
+    money: 0,
+    ownedItems: ["board_wood"],
+    joinDate: todayStr(),
+    lastSpinDate: null,
+    walletHistory: []
+  };
+  saveUsers(users);
+  setSession(key);
+  showToast(`Welcome to WinAdda! +${WELCOME_BONUS} points to start.`);
+  enterApp();
+});
+
+// ---------- login ----------
+document.getElementById("loginForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const username = document.getElementById("loginUsername").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+  const errEl = document.getElementById("loginError");
+  errEl.textContent = "";
+
+  const users = loadUsers();
+  const user = users[username];
+  if (!user || user.password !== password) {
+    errEl.textContent = "Incorrect username or password.";
+    return;
+  }
+  setSession(username);
+  enterApp();
+});
+
+// ---------- logout ----------
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  clearSession();
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+  document.getElementById("loginForm").reset();
+});
+
+// ---------- current user helpers ----------
+function getCurrentUser() {
+  const key = getSession();
+  if (!key) return null;
+  const users = loadUsers();
+  return users[key] ? { key, ...users[key] } : null;
+}
+function updateCurrentUser(fields) {
+  const key = getSession();
+  const users = loadUsers();
+  if (!users[key]) return;
+  Object.assign(users[key], fields);
+  saveUsers(users);
+}
+
+// ---------- navigation ----------
+const screens = ["home", "games", "spin", "wallet", "profile", "store"];
+function goto(screenName) {
+  screens.forEach(s => {
+    document.getElementById("screen-" + s).classList.toggle("active", s === screenName);
+  });
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.screen === screenName);
+  });
+  if (screenName === "wallet") renderWallet();
+  if (screenName === "profile") renderProfile();
+  if (screenName === "spin") renderSpin();
+  if (screenName === "store") renderStore();
+}
+document.querySelectorAll(".nav-item").forEach(btn => {
+  btn.addEventListener("click", () => goto(btn.dataset.screen));
+});
+document.querySelectorAll("[data-goto]").forEach(btn => {
+  btn.addEventListener("click", () => goto(btn.dataset.goto));
+});
+
+// ---------- locked games ----------
+document.querySelectorAll(".game-card.locked").forEach(card => {
+  card.addEventListener("click", () => {
+    const name = card.querySelector(".game-name").textContent;
+    showToast(`${name} is coming soon — hang tight!`);
+  });
+});
+
+// ---------- render: top points pill ----------
+function renderTopPoints() {
+  const user = getCurrentUser();
+  if (!user) return;
+  document.getElementById("topPointsValue").textContent = user.points;
+}
+
+// ---------- render: spin screen ----------
+function renderSpin() {
+  const user = getCurrentUser();
+  if (!user) return;
+  const spinBtn = document.getElementById("spinBtn");
+  const sub = document.getElementById("spinSub");
+  const alreadySpun = user.lastSpinDate === todayStr();
+  spinBtn.disabled = alreadySpun;
+  spinBtn.textContent = alreadySpun ? "Come back tomorrow" : "Spin now";
+  sub.textContent = alreadySpun
+    ? "You've used today's free spin. It resets at midnight."
+    : "One free spin every day. Come back tomorrow for another.";
+  document.getElementById("spinResult").textContent = "";
+}
+
+document.getElementById("spinBtn").addEventListener("click", () => {
+  const user = getCurrentUser();
+  if (!user || user.lastSpinDate === todayStr()) return;
+
+  const wheel = document.getElementById("wheel");
+  const spinBtn = document.getElementById("spinBtn");
+  spinBtn.disabled = true;
+
+  const segIndex = Math.floor(Math.random() * WHEEL_VALUES.length);
+  const value = WHEEL_VALUES[segIndex];
+  const segAngle = 360 / WHEEL_VALUES.length;
+  // land the pointer (top) on the middle of the chosen segment, plus extra full spins
+  const targetAngle = 360 * 5 + (360 - (segIndex * segAngle + segAngle / 2));
+
+  wheel.style.transform = `rotate(${targetAngle}deg)`;
+
+  setTimeout(() => {
+    updateCurrentUser({
+      points: user.points + value,
+      lastSpinDate: todayStr()
+    });
+    document.getElementById("spinResult").textContent = `You won ${value} points!`;
+    renderTopPoints();
+    renderSpin();
+    // reset wheel rotation modulo 360 for next time, no visible jump since it's post-animation
+    wheel.style.transition = "none";
+    wheel.style.transform = `rotate(${targetAngle % 360}deg)`;
+    requestAnimationFrame(() => { wheel.style.transition = ""; });
+  }, 4100);
+});
+
+// ---------- render: wallet screen ----------
+let buyMode = "points"; // "points" or "money"
+let selectedPreset = null;
+
+function renderWallet() {
+  const user = getCurrentUser();
+  if (!user) return;
+  document.getElementById("wMainPoints").textContent = user.points;
+  document.getElementById("wMainMoney").textContent = `₹${user.money}`;
+  document.getElementById("redeemError").textContent = "";
+  document.getElementById("redeemSuccess").textContent = "";
+  updateContactLink();
+
+  const list = document.getElementById("walletHistory");
+  if (!user.walletHistory || user.walletHistory.length === 0) {
+    list.innerHTML = '<p class="empty-note">No wallet activity yet.</p>';
+    return;
+  }
+  list.innerHTML = user.walletHistory.slice().reverse().map(h =>
+    `<div class="history-row"><span>${h.label}</span><span class="history-amount">${h.amountText}</span></div>`
+  ).join("");
+}
+
+function updateContactLink() {
+  const user = getCurrentUser();
+  if (!user) return;
+  const amountInput = document.getElementById("customAmount");
+  const amount = amountInput.value || selectedPreset || "";
+  const unit = buyMode === "points" ? "points" : "rupees to my wallet";
+  const contactLink = document.getElementById("contactLink");
+  const msg = encodeURIComponent(
+    `Hi, I'd like to buy ${amount || "___"} ${unit} on WinAdda (username: ${user.displayName}).`
+  );
+  contactLink.href = `https://wa.me/${OWNER_WHATSAPP}?text=${msg}`;
+}
+
+// toggle between Buy Points / Add Wallet Money
+document.getElementById("toggleBuyPoints").addEventListener("click", () => setBuyMode("points"));
+document.getElementById("toggleAddMoney").addEventListener("click", () => setBuyMode("money"));
+
+function setBuyMode(mode) {
+  buyMode = mode;
+  document.getElementById("toggleBuyPoints").classList.toggle("active", mode === "points");
+  document.getElementById("toggleAddMoney").classList.toggle("active", mode === "money");
+  document.getElementById("buyModeExplain").textContent = mode === "points"
+    ? "Points convert 1:1 with rupees — pay ₹100, get 100 points, straight to your game balance. No chance involved."
+    : "Add money to your wallet to spend on Store items later, or top up in advance.";
+  document.querySelectorAll(".preset-chip").forEach(c => c.classList.remove("active"));
+  selectedPreset = null;
+  document.getElementById("customAmount").value = "";
+  updateContactLink();
+}
+
+document.querySelectorAll(".preset-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll(".preset-chip").forEach(c => c.classList.remove("active"));
+    chip.classList.add("active");
+    selectedPreset = chip.dataset.amount;
+    document.getElementById("customAmount").value = selectedPreset;
+    updateContactLink();
+  });
+});
+
+document.getElementById("customAmount").addEventListener("input", () => {
+  document.querySelectorAll(".preset-chip").forEach(c => c.classList.remove("active"));
+  selectedPreset = null;
+  updateContactLink();
+});
+
+function getUsedCodes() {
+  try { return JSON.parse(localStorage.getItem(USED_CODES_KEY)) || []; }
+  catch (e) { return []; }
+}
+function markCodeUsed(code) {
+  const used = getUsedCodes();
+  used.push(code);
+  localStorage.setItem(USED_CODES_KEY, JSON.stringify(used));
+}
+
+document.getElementById("redeemForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const user = getCurrentUser();
+  const errEl = document.getElementById("redeemError");
+  const okEl = document.getElementById("redeemSuccess");
+  const input = document.getElementById("redeemCode");
+  const code = input.value.trim().toUpperCase();
+  errEl.textContent = "";
+  okEl.textContent = "";
+
+  if (!code) { errEl.textContent = "Enter a code."; return; }
+  const entry = REDEEM_CODES[code];
+  if (!entry) { errEl.textContent = "That code isn't valid."; return; }
+  if (getUsedCodes().includes(code)) { errEl.textContent = "That code has already been used."; return; }
+
+  const history = user.walletHistory || [];
+  const fields = {};
+
+  if (entry.type === "points") {
+    fields.points = user.points + entry.amount;
+    history.push({ label: `Redeemed ${code}`, amountText: `+${entry.amount} pts`, date: new Date().toLocaleDateString() });
+  } else {
+    fields.money = user.money + entry.amount;
+    history.push({ label: `Redeemed ${code}`, amountText: `+₹${entry.amount}`, date: new Date().toLocaleDateString() });
+  }
+  fields.walletHistory = history;
+
+  updateCurrentUser(fields);
+  markCodeUsed(code);
+
+  input.value = "";
+  okEl.textContent = entry.type === "points"
+    ? `${entry.amount} points added!`
+    : `₹${entry.amount} added to your wallet!`;
+  showToast(entry.type === "points" ? `${entry.amount} points added.` : `₹${entry.amount} added to your wallet.`);
+  renderTopPoints();
+  renderWallet();
+});
+
+// ---------- render: store screen ----------
+function renderStore() {
+  const user = getCurrentUser();
+  if (!user) return;
+  const grid = document.getElementById("storeGrid");
+  const owned = user.ownedItems || [];
+
+  grid.innerHTML = STORE_ITEMS.map(item => {
+    const isOwned = owned.includes(item.id);
+    let actions;
+    if (isOwned) {
+      actions = `<span class="store-owned-badge">Owned</span>`;
+    } else {
+      const buttons = [];
+      if (item.pointsPrice > 0) {
+        const disabled = user.points < item.pointsPrice ? "disabled" : "";
+        buttons.push(`<button class="store-buy-btn pts" data-item="${item.id}" data-method="points" ${disabled}>${item.pointsPrice} pts</button>`);
+      }
+      if (item.moneyPrice > 0) {
+        const disabled = user.money < item.moneyPrice ? "disabled" : "";
+        buttons.push(`<button class="store-buy-btn money" data-item="${item.id}" data-method="money" ${disabled}>₹${item.moneyPrice}</button>`);
+      }
+      actions = buttons.join("");
+    }
+    return `
+      <div class="store-card">
+        <div class="store-art">${item.emoji}</div>
+        <div class="store-info">
+          <span class="store-name">${item.name}</span>
+          <span class="store-desc">${item.desc}</span>
+        </div>
+        <div class="store-actions">${actions}</div>
+      </div>`;
+  }).join("");
+
+  grid.querySelectorAll(".store-buy-btn").forEach(btn => {
+    btn.addEventListener("click", () => buyItem(btn.dataset.item, btn.dataset.method));
+  });
+}
+
+function buyItem(itemId, method) {
+  const user = getCurrentUser();
+  const item = STORE_ITEMS.find(i => i.id === itemId);
+  if (!user || !item) return;
+
+  const price = method === "points" ? item.pointsPrice : item.moneyPrice;
+  const balance = method === "points" ? user.points : user.money;
+  if (balance < price) { showToast("Not enough balance for that."); return; }
+
+  const owned = user.ownedItems || [];
+  owned.push(item.id);
+
+  const fields = { ownedItems: owned };
+  if (method === "points") fields.points = user.points - price;
+  else fields.money = user.money - price;
+
+  if (method === "money") {
+    const history = user.walletHistory || [];
+    history.push({ label: `Bought ${item.name}`, amountText: `-₹${price}`, date: new Date().toLocaleDateString() });
+    fields.walletHistory = history;
+  }
+
+  updateCurrentUser(fields);
+  showToast(`${item.name} unlocked!`);
+  renderTopPoints();
+  renderStore();
+}
+
+// ---------- render: profile screen ----------
+function renderProfile() {
+  const user = getCurrentUser();
+  if (!user) return;
+  document.getElementById("profileName").textContent = user.displayName;
+  document.getElementById("avatarInitial").textContent = user.displayName.charAt(0).toUpperCase();
+  document.getElementById("profileSince").textContent = `Playing since ${user.joinDate}`;
+  document.getElementById("profileMainBalance").textContent = user.points;
+  document.getElementById("profileMoneyBalance").textContent = `₹${user.money}`;
+
+  const owned = user.ownedItems || [];
+  const grid = document.getElementById("ownedGrid");
+  if (owned.length === 0) {
+    grid.innerHTML = '<p class="empty-note">No items yet — visit the Store to customise your boards.</p>';
+    return;
+  }
+  grid.innerHTML = owned.map(id => {
+    const item = STORE_ITEMS.find(i => i.id === id);
+    if (!item) return "";
+    return `<div class="owned-chip"><span>${item.emoji}</span><span>${item.name}</span></div>`;
+  }).join("");
+}
+
+// ---------- boot ----------
+function enterApp() {
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  goto("home");
+  renderTopPoints();
+}
+
+(function boot() {
+  const user = getCurrentUser();
+  if (user) enterApp();
+})();
+
+</script>
+</body>
+</html>
